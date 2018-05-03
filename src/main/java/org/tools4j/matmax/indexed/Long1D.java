@@ -47,7 +47,7 @@ public interface Long1D extends Primitive1D<Long, Long1D>, Operand.LongOp<Long1D
     }
 
     @Override
-    default Function<BinaryOperator<Long1D>, Long1D> with(final Long1D secondOperand) {
+    default BinaryOperable<Long1D, ? extends Long1D> with(final Long1D secondOperand) {
         return operator -> operator.apply(this, secondOperand);
     }
 

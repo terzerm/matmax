@@ -36,7 +36,7 @@ public final class DoubleFunctions {
     public static final DoubleUnaryOperator ABS = Math::abs;
     public static final DoubleUnaryOperator SQRT = Math::sqrt;
 
-    public static Function<Double2D, Double2D> TRANSPOSE = mx -> (r, c) -> mx.valueAsDouble(c, r);
+    public static Function<Double2D, Double2D> TRANSPOSE = input -> (r, c) -> input.valueAsDouble(c, r);
 
 
     public static DoubleUnaryOperator add(final double summand) {
@@ -60,7 +60,7 @@ public final class DoubleFunctions {
     }
 
     public static Function<Double2D, Double2D> lag(final int rows, final int cols) {
-        return mx -> (r, c) -> mx.valueAsDouble(r - rows, c - cols);
+        return input -> (r, c) -> input.valueAsDouble(r - rows, c - cols);
     }
 
 

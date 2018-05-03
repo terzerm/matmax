@@ -25,7 +25,6 @@ package org.tools4j.matmax.indexed;
 
 import org.tools4j.matmax.function.Operand;
 
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 @FunctionalInterface
@@ -35,6 +34,16 @@ public interface Bool2D extends Primitive2D<Boolean, Bool2D>, Operand.BoolOp<Boo
     @Override
     default Boolean value(final int row, final int column) {
         return valueAsBoolean(row, column);
+    }
+
+    @Override
+    default Bool1D row(final int row) {
+        return col -> valueAsBoolean(row, col);
+    }
+
+    @Override
+    default Bool1D column(final int col) {
+        return row -> valueAsBoolean(row, col);
     }
 
     @Override
@@ -48,7 +57,7 @@ public interface Bool2D extends Primitive2D<Boolean, Bool2D>, Operand.BoolOp<Boo
     }
 
     @Override
-    default Function<BinaryOperator<Bool2D>, Bool2D> with(final Bool2D secondOperand) {
+    default BinaryOperable<Bool2D, ? extends Bool2D> with(final Bool2D secondOperand) {
         return operator -> operator.apply(this, secondOperand);
     }
 

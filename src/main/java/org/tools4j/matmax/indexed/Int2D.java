@@ -37,12 +37,22 @@ public interface Int2D extends Primitive2D<Integer, Int2D>, Operand.IntOp<Int2D>
     }
 
     @Override
+    default Int1D row(final int row) {
+        return col -> valueAsInt(row, col);
+    }
+
+    @Override
+    default Int1D column(final int col) {
+        return row -> valueAsInt(row, col);
+    }
+
+    @Override
     default Int2D apply(final Function<? super Int2D, ? extends Int2D> operator) {
         return operator.apply(this);
     }
 
     @Override
-    default Function<BinaryOperator<Int2D>, Int2D> with(final Int2D secondOperand) {
+    default BinaryOperable<Int2D, ? extends Int2D> with(final Int2D secondOperand) {
         return operator -> operator.apply(this, secondOperand);
     }
 

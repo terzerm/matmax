@@ -27,4 +27,8 @@ import org.tools4j.matmax.function.Operand;
 
 public interface Indexed1D<V, T extends Indexed1D<V, T>> extends Operand<T> {
     V value(int index);
+
+    default Obj1D<V> toObj1D() {
+        return this::value;
+    }
 }

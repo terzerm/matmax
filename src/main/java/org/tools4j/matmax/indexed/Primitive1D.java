@@ -24,5 +24,5 @@
 package org.tools4j.matmax.indexed;
 
 public interface Primitive1D<V, T extends Primitive1D<V, T>> extends Indexed1D<V, T> {
-    Obj1D<V> toObj1D();
+    // nothing to add
 }

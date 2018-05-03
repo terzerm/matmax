@@ -47,7 +47,7 @@ public interface Double1D extends Primitive1D<Double, Double1D>, Operand.DoubleO
     }
 
     @Override
-    default Function<BinaryOperator<Double1D>, Double1D> with(final Double1D secondOperand) {
+    default BinaryOperable<Double1D, ? extends Double1D> with(final Double1D secondOperand) {
         return operator -> operator.apply(this, secondOperand);
     }
 

@@ -37,6 +37,16 @@ public interface Double2D extends Primitive2D<Double, Double2D>, Operand.DoubleO
     }
 
     @Override
+    default Double1D row(final int row) {
+        return col -> valueAsDouble(row, col);
+    }
+
+    @Override
+    default Double1D column(final int col) {
+        return row -> valueAsDouble(row, col);
+    }
+
+    @Override
     default Double2D apply(final Function<? super Double2D, ? extends Double2D> operator) {
         return operator.apply(this);
     }
@@ -47,7 +57,7 @@ public interface Double2D extends Primitive2D<Double, Double2D>, Operand.DoubleO
     }
 
     @Override
-    default Function<BinaryOperator<Double2D>, Double2D> with(final Double2D secondOperand) {
+    default BinaryOperable<Double2D, ? extends Double2D> with(final Double2D secondOperand) {
         return operator -> operator.apply(this, secondOperand);
     }
 

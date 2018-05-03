@@ -37,6 +37,16 @@ public interface Long2D extends Primitive2D<Long, Long2D>, Operand.LongOp<Long2D
     }
 
     @Override
+    default Long1D row(final int row) {
+        return col -> valueAsLong(row, col);
+    }
+
+    @Override
+    default Long1D column(final int col) {
+        return row -> valueAsLong(row, col);
+    }
+
+    @Override
     default Long2D apply(final Function<? super Long2D, ? extends Long2D> operator) {
         return operator.apply(this);
     }
@@ -47,7 +57,7 @@ public interface Long2D extends Primitive2D<Long, Long2D>, Operand.LongOp<Long2D
     }
 
     @Override
-    default Function<BinaryOperator<Long2D>, Long2D> with(final Long2D secondOperand) {
+    default BinaryOperable<Long2D, ? extends Long2D> with(final Long2D secondOperand) {
         return operator -> operator.apply(this, secondOperand);
     }
 

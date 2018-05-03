@@ -47,7 +47,7 @@ public interface Int1D extends Primitive1D<Integer, Int1D>, Operand.IntOp<Int1D>
     }
 
     @Override
-    default Function<BinaryOperator<Int1D>, Int1D> with(final Int1D secondOperand) {
+    default BinaryOperable<Int1D, ? extends Int1D> with(final Int1D secondOperand) {
         return operator -> operator.apply(this, secondOperand);
     }
 

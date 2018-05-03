@@ -21,36 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.tools4j.matmax.function;
+package org.tools4j.matmax.dataframe;
 
-import java.util.function.*;
+import org.tools4j.matmax.indexed.Obj2D;
 
-public interface Operand<T extends Operand<T>> {
-    T apply(Function<? super T, ? extends T> operator);
+public interface DataFrame<V> extends Obj2D<V>  {
 
-    BinaryOperable<T,? extends T> with(T secondOperand);
 
-    interface BinaryOperable<T,R> extends Function<BiFunction<? super R, ? super T, ? extends T>, T> {
-        //nothing to add
-    }
-
-    interface BoolOp<T extends BoolOp<T>> extends Operand<T> {
-        T negate();
-    }
-
-    interface IntOp<T extends IntOp<T>> extends Operand<T> {
-        T applyToEach(IntUnaryOperator operator);
-    }
-
-    interface LongOp<T extends LongOp<T>> extends Operand<T> {
-        T applyToEach(LongUnaryOperator operator);
-    }
-
-    interface DoubleOp<T extends DoubleOp<T>> extends Operand<T> {
-        T applyToEach(DoubleUnaryOperator operator);
-    }
-
-    interface ObjOp<V, T extends ObjOp<V, T>> extends Operand<T> {
-        T applyToEach(Function<? super V, ? extends V> operator);
-    }
+    /*
+    pd.DataFrame([('falcon', 'bird',    389.0),
+                       ('parrot', 'bird',     24.0),
+                       ('lion',   'mammal',   80.5),
+                       ('monkey', 'mammal', np.nan)],
+                      columns=('name', 'class', 'max_speed'),
+                      index=[0, 2, 3, 1])
+     */
 }

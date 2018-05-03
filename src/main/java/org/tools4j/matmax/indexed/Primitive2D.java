@@ -24,5 +24,5 @@
 package org.tools4j.matmax.indexed;
 
 public interface Primitive2D<V, T extends Primitive2D<V, T>> extends Indexed2D<V, T> {
-    Obj2D<V> toObj2D();
+    // nothing to add
 }

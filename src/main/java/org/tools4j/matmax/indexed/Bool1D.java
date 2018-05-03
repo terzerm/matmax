@@ -25,7 +25,6 @@ package org.tools4j.matmax.indexed;
 
 import org.tools4j.matmax.function.Operand;
 
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 @FunctionalInterface
@@ -48,7 +47,7 @@ public interface Bool1D extends Primitive1D<Boolean, Bool1D>, Operand.BoolOp<Boo
     }
 
     @Override
-    default Function<BinaryOperator<Bool1D>, Bool1D> with(final Bool1D secondOperand) {
+    default BinaryOperable<Bool1D, ? extends Bool1D> with(final Bool1D secondOperand) {
         return operator -> operator.apply(this, secondOperand);
     }
 

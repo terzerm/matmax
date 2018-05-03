@@ -38,7 +38,7 @@ public interface Obj1D<V> extends Indexed1D<V, Obj1D<V>>, Operand.ObjOp<V, Obj1D
     }
 
     @Override
-    default Function<BinaryOperator<Obj1D<V>>, Obj1D<V>> with(final Obj1D<V> secondOperand) {
+    default BinaryOperable<Obj1D<V>, ? extends Obj1D<V>> with(final Obj1D<V> secondOperand) {
         return operator -> operator.apply(this, secondOperand);
     }
 

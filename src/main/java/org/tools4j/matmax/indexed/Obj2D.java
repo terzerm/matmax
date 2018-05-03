@@ -33,6 +33,16 @@ public interface Obj2D<V> extends Indexed2D<V, Obj2D<V>>, Operand.ObjOp<V, Obj2D
     V value(int row, int column);
 
     @Override
+    default Obj1D<V> row(final int row) {
+        return col -> value(row, col);
+    }
+
+    @Override
+    default Obj1D<V> column(final int col) {
+        return row -> value(row, col);
+    }
+
+    @Override
     default Obj2D<V> apply(final Function<? super Obj2D<V>, ? extends Obj2D<V>> operator) {
         return operator.apply(this);
     }
@@ -43,7 +53,7 @@ public interface Obj2D<V> extends Indexed2D<V, Obj2D<V>>, Operand.ObjOp<V, Obj2D
     }
 
     @Override
-    default Function<BinaryOperator<Obj2D<V>>, Obj2D<V>> with(final Obj2D<V> secondOperand) {
+    default BinaryOperable<Obj2D<V>, ? extends Obj2D<V>> with(final Obj2D<V> secondOperand) {
         return operator -> operator.apply(this, secondOperand);
     }
 
