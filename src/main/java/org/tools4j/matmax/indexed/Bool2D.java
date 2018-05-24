@@ -38,7 +38,7 @@ public interface Bool2D extends Primitive2D<Boolean, Bool2D>, Operand.BoolOp<Boo
 
     @Override
     default Bool1D row(final int row) {
-        return col -> valueAsBoolean(row, col);
+        return column -> valueAsBoolean(row, column);
     }
 
     @Override
@@ -49,6 +49,26 @@ public interface Bool2D extends Primitive2D<Boolean, Bool2D>, Operand.BoolOp<Boo
     @Override
     default Bool2D negate() {
         return (row, column) -> !valueAsBoolean(row, column);
+    }
+
+    @Override
+    default Bool2D or(final Bool2D other) {
+        return (row, column) -> valueAsBoolean(row, column) || other.valueAsBoolean(row, column);
+    }
+
+    @Override
+    default Bool2D and(final Bool2D other) {
+        return (row, column) -> valueAsBoolean(row, column) && other.valueAsBoolean(row, column);
+    }
+
+    @Override
+    default Bool2D xor(final Bool2D other) {
+        return (row, column) -> valueAsBoolean(row, column) ^ other.valueAsBoolean(row, column);
+    }
+
+    @Override
+    default Bool2D andNot(final Bool2D other) {
+        return (row, column) -> valueAsBoolean(row, column) && !other.valueAsBoolean(row, column);
     }
 
     @Override
@@ -82,4 +102,8 @@ public interface Bool2D extends Primitive2D<Boolean, Bool2D>, Operand.BoolOp<Boo
         return (row, column) -> valueAsBoolean(row, column) ? trueValue : falseValue;
     }
 
+    @Override
+    default Obj2D<String> toStr2D() {
+        return (row, column) -> String.valueOf(valueAsBoolean(row, column));
+    }
 }

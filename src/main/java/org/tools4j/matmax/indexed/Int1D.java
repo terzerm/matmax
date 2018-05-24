@@ -80,4 +80,8 @@ public interface Int1D extends Primitive1D<Integer, Int1D>, Operand.IntOp<Int1D>
         return index -> function.apply(valueAsInt(index));
     }
 
+    @Override
+    default Obj1D<String> toStr1D() {
+        return index -> String.valueOf(valueAsInt(index));
+    }
 }

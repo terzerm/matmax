@@ -89,4 +89,9 @@ public interface Int2D extends Primitive2D<Integer, Int2D>, Operand.IntOp<Int2D>
     default <T> Obj2D<T> toObj2D(final IntFunction<? extends T> function) {
         return (row, column) -> function.apply(valueAsInt(row, column));
     }
+
+    @Override
+    default Obj2D<String> toStr2D() {
+        return (row, column) -> String.valueOf(valueAsInt(row, column));
+    }
 }

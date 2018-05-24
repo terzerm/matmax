@@ -72,4 +72,8 @@ public interface Double1D extends Primitive1D<Double, Double1D>, Operand.DoubleO
         return index -> function.apply(valueAsDouble(index));
     }
 
+    @Override
+    default Obj1D<String> toStr1D() {
+        return index -> String.valueOf(valueAsDouble(index));
+    }
 }

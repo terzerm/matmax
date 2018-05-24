@@ -81,4 +81,9 @@ public interface Long2D extends Primitive2D<Long, Long2D>, Operand.LongOp<Long2D
     default <T> Obj2D<T> toObj2D(final LongFunction<? extends T> function) {
         return (row, column) -> function.apply(valueAsLong(row, column));
     }
+
+    @Override
+    default Obj2D<String> toStr2D() {
+        return (row, column) -> String.valueOf(valueAsLong(row, column));
+    }
 }

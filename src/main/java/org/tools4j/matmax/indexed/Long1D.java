@@ -71,4 +71,9 @@ public interface Long1D extends Primitive1D<Long, Long1D>, Operand.LongOp<Long1D
     default <T> Obj1D<T> toObj1D(final LongFunction<? extends T> function) {
         return index -> function.apply(valueAsLong(index));
     }
+
+    @Override
+    default Obj1D<String> toStr1D() {
+        return index -> String.valueOf(valueAsLong(index));
+    }
 }

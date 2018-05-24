@@ -24,10 +24,16 @@
 package org.tools4j.matmax.matrix;
 
 import org.tools4j.matmax.indexed.Indexed2D;
+import org.tools4j.matmax.vector.Vector;
 
 public interface Matrix<V, T extends Indexed2D<V, T>> extends Indexed2D<V, T> {
     int nRows();
     int nColumns();
+
+    @Override
+    Vector<V, ?> row(int row);
+    @Override
+    Vector<V, ?> column(int col);
 
     interface HashFunction<M extends Matrix<?,?>> {
         int hashCode(M matrix, int row, int col);
@@ -43,7 +49,7 @@ public interface Matrix<V, T extends Indexed2D<V, T>> extends Indexed2D<V, T> {
         final int cols = matrix.nColumns();
         int hash = 31 * rows + cols;
         if (rows == 0 | cols == 0) return hash;
-        if (rows * cols < n) {
+        if (rows * cols <= n) {
             for (int r = 0; r < rows; r++) {
                 for (int c = 0; c < cols; c++) {
                     hash = (31 * hash) + hashFunction.hashCode(matrix, r, c);
@@ -51,7 +57,7 @@ public interface Matrix<V, T extends Indexed2D<V, T>> extends Indexed2D<V, T> {
             }
         } else {
             int p = 2147483647;//largest int prime
-            final int len = Math.min(rows * cols, 10);
+            final int len = Math.min(rows * cols, n);
             for (int i = 0; i < len; i++) {
                 final int r = p % rows;
                 final int c = (p / rows) % cols;
@@ -66,10 +72,10 @@ public interface Matrix<V, T extends Indexed2D<V, T>> extends Indexed2D<V, T> {
     static <M extends Matrix<?,?>> boolean equals(final M m1, final M m2, final ValueEquality<? super M> valueEquality) {
         if (m1 == m2) return true;
         if (m1 == null || m2 == null) return false;//cannot be both null due to first line
-        if (m1.nRows() != m2.nRows()) return false;
-        if (m1.nColumns() != m2.nColumns()) return false;
         final int rows = m1.nRows();
+        if (rows != m2.nRows()) return false;
         final int cols = m1.nColumns();
+        if (cols != m2.nColumns()) return false;
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 if (!valueEquality.equalValues(m1, m2, r, c)) return false;

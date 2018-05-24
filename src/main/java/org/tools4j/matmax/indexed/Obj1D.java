@@ -47,19 +47,19 @@ public interface Obj1D<V> extends Indexed1D<V, Obj1D<V>>, Operand.ObjOp<V, Obj1D
         return index -> operator.apply(value(index));
     }
 
-    default Bool1D toBool2D(final Predicate<? super V> function) {
+    default Bool1D toBool1D(final Predicate<? super V> function) {
         return index -> function.test(value(index));
     }
 
-    default Int1D toInt2D(final ToIntFunction<? super V> function) {
+    default Int1D toInt1D(final ToIntFunction<? super V> function) {
         return index -> function.applyAsInt(value(index));
     }
 
-    default Long1D toLong2D(final ToLongFunction<? super V> function) {
+    default Long1D toLong1D(final ToLongFunction<? super V> function) {
         return index -> function.applyAsLong(value(index));
     }
 
-    default Double1D toDouble2D(final ToDoubleFunction<? super V> function) {
+    default Double1D toDouble1D(final ToDoubleFunction<? super V> function) {
         return index -> function.applyAsDouble(value(index));
     }
 }

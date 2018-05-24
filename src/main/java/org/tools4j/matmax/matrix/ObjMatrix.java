@@ -24,6 +24,7 @@
 package org.tools4j.matmax.matrix;
 
 import org.tools4j.matmax.indexed.Obj2D;
+import org.tools4j.matmax.vector.ObjVector;
 
 import java.util.Objects;
 
@@ -31,6 +32,18 @@ public interface ObjMatrix<V> extends Matrix<V, Obj2D<V>>, Obj2D<V> {
 
     HashFunction<ObjMatrix<?>> HASH_FUNCTION = (m,r,c) -> Objects.hashCode(m.value(r, c));
     ValueEquality<ObjMatrix<?>> VALUE_EQUALITY = (m1,m2,r,c) -> Objects.equals(m1.value(r,c), m2.value(r,c));
+
+    @Override
+    default ObjVector<V> row(final int row) {
+        final int cols = nColumns();
+        return ObjVector.create(cols, col -> value(row, col));
+    }
+
+    @Override
+    default ObjVector<V> column(final int col) {
+        final int rows = nRows();
+        return ObjVector.create(rows, row -> value(row, col));
+    }
 
     static <V> ObjMatrix<V> create(final Matrix<?,?> meta, Obj2D<V> data) {
         return create(meta.nRows(), meta.nColumns(), data);

@@ -36,6 +36,10 @@ public interface Operand<T extends Operand<T>> {
 
     interface BoolOp<T extends BoolOp<T>> extends Operand<T> {
         T negate();
+        T or(T other);
+        T and(T other);
+        T xor(T other);
+        T andNot(T other);
     }
 
     interface IntOp<T extends IntOp<T>> extends Operand<T> {

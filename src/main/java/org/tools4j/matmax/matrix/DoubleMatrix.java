@@ -24,6 +24,7 @@
 package org.tools4j.matmax.matrix;
 
 import org.tools4j.matmax.indexed.*;
+import org.tools4j.matmax.vector.DoubleVector;
 
 import java.util.function.*;
 
@@ -33,14 +34,14 @@ public interface DoubleMatrix extends Matrix<Double, Double2D>, Double2D {
     ValueEquality<DoubleMatrix> VALUE_EQUALITY = (m1,m2,r,c) -> Double.compare(
             m1.valueAsDouble(r,c), m2.valueAsDouble(r,c)) == 0;//NOTE: Double.compare handles NaN values
 
-    @Override//FIXME return Vector1D
-    default Double1D row(final int row) {
-        return col -> valueAsDouble(row, col);
+    default DoubleVector row(final int row) {
+        final int cols = nColumns();
+        return DoubleVector.create(cols, col -> valueAsDouble(row, col));
     }
 
-    @Override//FIXME return Vector1D
-    default Double1D column(final int col) {
-        return row -> valueAsDouble(row, col);
+    default DoubleVector column(final int col) {
+        final int rows = nColumns();
+        return DoubleVector.create(rows, row -> valueAsDouble(row, col));
     }
 
     @Override
@@ -50,7 +51,7 @@ public interface DoubleMatrix extends Matrix<Double, Double2D>, Double2D {
 
     @Override
     default DoubleMatrix applyToEach(final DoubleUnaryOperator operator) {
-        return DoubleMatrix.create(this, (row, column) -> operator.applyAsDouble(valueAsDouble(row, column)));
+        return DoubleMatrix.create(this, Double2D.super.applyToEach(operator));
     }
 
     @Override
@@ -90,12 +91,18 @@ public interface DoubleMatrix extends Matrix<Double, Double2D>, Double2D {
                 r >= 0 & r < rows & c >= 0 & c < cols & c < values[r].length ? values[r][c] : Double.NaN);
     }
 
+    static DoubleMatrix createFromRows(final DoubleVector... rowData) {
+        return createFromRows(rowData.length == 0 ? 0 : rowData[0].nElements(), rowData);
+    }
     static DoubleMatrix createFromRows(final int cols, final Double1D... rowData) {
         final int rows = rowData.length;
         return create(rows, cols, (r,c) ->
                 r >= 0 & r < rows & c >= 0 & c < cols ? rowData[r].valueAsDouble(c) : Double.NaN);
     }
 
+    static DoubleMatrix createFromColumns(final DoubleVector... columnData) {
+        return createFromColumns(columnData.length == 0 ? 0 : columnData[0].nElements(), columnData);
+    }
     static DoubleMatrix createFromColumns(final int rows, final Double1D... columnData) {
         final int cols = columnData.length;
         return create(rows, cols, (r,c) ->

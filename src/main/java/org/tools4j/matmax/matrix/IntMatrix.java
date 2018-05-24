@@ -25,11 +25,24 @@ package org.tools4j.matmax.matrix;
 
 import org.tools4j.matmax.indexed.Int1D;
 import org.tools4j.matmax.indexed.Int2D;
+import org.tools4j.matmax.vector.IntVector;
 
 public interface IntMatrix extends Matrix<Integer, Int2D>, Int2D {
 
     HashFunction<IntMatrix> HASH_FUNCTION = (m, r, c) -> Integer.hashCode(m.valueAsInt(r,c));
     ValueEquality<IntMatrix> VALUE_EQUALITY = (m1, m2, r, c) -> m1.valueAsInt(r,c) == m2.valueAsInt(r,c);
+
+    @Override
+    default IntVector row(final int row) {
+        final int cols = nColumns();
+        return IntVector.create(cols, col -> valueAsInt(row, col));
+    }
+
+    @Override
+    default IntVector column(final int col) {
+        final int rows = nColumns();
+        return IntVector.create(rows, row -> valueAsInt(row, col));
+    }
 
     static IntMatrix create(final int[][] values) {
         final int rows = values.length;
@@ -84,7 +97,7 @@ public interface IntMatrix extends Matrix<Integer, Int2D>, Int2D {
 
             @Override
             public String toString() {
-                return "DoubleMatrix:" + nRows() + "x" + nColumns();
+                return "IntMatrix:" + nRows() + "x" + nColumns();
             }
         };
     }

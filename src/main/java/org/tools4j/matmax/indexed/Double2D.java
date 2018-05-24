@@ -82,4 +82,8 @@ public interface Double2D extends Primitive2D<Double, Double2D>, Operand.DoubleO
         return (row, column) -> function.apply(valueAsDouble(row, column));
     }
 
+    @Override
+    default Obj2D<String> toStr2D() {
+        return (row, column) -> String.valueOf(valueAsDouble(row, column));
+    }
 }

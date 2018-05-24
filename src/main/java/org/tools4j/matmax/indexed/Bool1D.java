@@ -42,6 +42,26 @@ public interface Bool1D extends Primitive1D<Boolean, Bool1D>, Operand.BoolOp<Boo
     }
 
     @Override
+    default Bool1D or(final Bool1D other) {
+        return (index) -> valueAsBoolean(index) || other.valueAsBoolean(index);
+    }
+
+    @Override
+    default Bool1D and(final Bool1D other) {
+        return (index) -> valueAsBoolean(index) && other.valueAsBoolean(index);
+    }
+
+    @Override
+    default Bool1D xor(final Bool1D other) {
+        return (index) -> valueAsBoolean(index) ^ other.valueAsBoolean(index);
+    }
+
+    @Override
+    default Bool1D andNot(final Bool1D other) {
+        return (index) -> valueAsBoolean(index) && !other.valueAsBoolean(index);
+    }
+
+    @Override
     default Bool1D apply(final Function<? super Bool1D, ? extends Bool1D> operator) {
         return operator.apply(this);
     }
@@ -72,4 +92,8 @@ public interface Bool1D extends Primitive1D<Boolean, Bool1D>, Operand.BoolOp<Boo
         return index -> valueAsBoolean(index) ? trueValue : falseValue;
     }
 
+    @Override
+    default Obj1D<String> toStr1D() {
+        return index -> String.valueOf(valueAsBoolean(index));
+    }
 }
