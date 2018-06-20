@@ -25,6 +25,7 @@ package org.tools4j.matmax.vector;
 
 import org.tools4j.matmax.indexed.Double1D;
 import org.tools4j.matmax.indexed.Int1D;
+import org.tools4j.matmax.matrix.IntMatrix;
 
 import java.util.*;
 import java.util.function.*;
@@ -50,6 +51,21 @@ public interface IntVector extends Vector<Integer, Int1D>, Int1D {
     @Override
     default BinaryOperable<Int1D, ? extends IntVector> with(final Int1D secondOperand) {
         return operator -> operator.apply(this, secondOperand);
+    }
+
+    @Override
+    default IntMatrix toRow() {
+        return IntMatrix.create(1, nElements(), (row, column) -> row >= 0 & row < 1 ? value(column) : 0);
+    }
+
+    @Override
+    default IntMatrix toColumn() {
+        return IntMatrix.create(nElements(), 1, (row, column) -> column >= 0 & column < 1 ? value(row) : 0);
+    }
+
+    @Override
+    default ObjVector<String> toStr1D() {
+        return ObjVector.create(nElements(), Int1D.super.toStr1D());
     }
 
     @Override
@@ -204,10 +220,10 @@ public interface IntVector extends Vector<Integer, Int1D>, Int1D {
     }
 
     static IntVector constant(final int n, final int value) {
-        return create(n, index -> index >= 0 & index < n ? value : 0);
+        return value == 0 ? zero(n) : create(n, index -> index >= 0 & index < n ? value : 0);
     }
 
     static IntVector zero(final int n) {
-        return create(n, index -> 0);
+        return create(n, Int1D.ZERO);//no index check needed as zero is default
     }
 }

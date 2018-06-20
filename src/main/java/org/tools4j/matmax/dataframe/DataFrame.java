@@ -31,22 +31,19 @@ public interface DataFrame<V, T extends Indexed2D<V, T>> extends Matrix<V, T> {
 
     Header header();
 
-    default ObjVector<?> headerRow() {
-        return header().row(0);
+    default ObjVector<String> columnCaptions() {
+        return header().row(0).toStr1D();
     }
 
-    default ObjVector<?> headerColumn() {
-        return header().column(0);
+    default ObjVector<String> rowCaptions() {
+        return header().column(0).toStr1D();
     }
 
     default DataFrame<V, T> reshapeTo(final DataFrame<?, ?> template) {
         return reshapeTo(template.header());
     }
 
-    default DataFrame<V, T> reshapeTo(final Header header) {
-        if (hasSameShapeAs(header)) return this;
-        return null;//FIXME
-    }
+    DataFrame<V, T> reshapeTo(Header header);
 
     @Override
     default int nRows() {

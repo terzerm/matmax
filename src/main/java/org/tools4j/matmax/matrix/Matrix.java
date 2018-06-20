@@ -24,6 +24,7 @@
 package org.tools4j.matmax.matrix;
 
 import org.tools4j.matmax.indexed.Indexed2D;
+import org.tools4j.matmax.vector.ObjVector;
 import org.tools4j.matmax.vector.Vector;
 
 public interface Matrix<V, T extends Indexed2D<V, T>> extends Indexed2D<V, T> {
@@ -34,6 +35,13 @@ public interface Matrix<V, T extends Indexed2D<V, T>> extends Indexed2D<V, T> {
     Vector<V, ?> row(int row);
     @Override
     Vector<V, ?> column(int col);
+
+    @Override
+    ObjVector<? extends Vector<V,?>> rows();
+    @Override
+    ObjVector<? extends Vector<V,?>> columns();
+
+    ObjMatrix<String> toStr2D();
 
     interface HashFunction<M extends Matrix<?,?>> {
         int hashCode(M matrix, int row, int col);

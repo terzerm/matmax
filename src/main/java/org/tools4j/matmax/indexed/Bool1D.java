@@ -29,6 +29,9 @@ import java.util.function.Function;
 
 @FunctionalInterface
 public interface Bool1D extends Primitive1D<Boolean, Bool1D>, Operand.BoolOp<Bool1D> {
+    Bool1D TRUE = index -> true;
+    Bool1D FALSE = index -> false;
+
     boolean valueAsBoolean(int index);
 
     @Override
@@ -96,4 +99,9 @@ public interface Bool1D extends Primitive1D<Boolean, Bool1D>, Operand.BoolOp<Boo
     default Obj1D<String> toStr1D() {
         return index -> String.valueOf(valueAsBoolean(index));
     }
+
+    static Bool1D constant(final boolean value) {
+        return value ? TRUE : FALSE;
+    }
+
 }

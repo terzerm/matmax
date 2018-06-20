@@ -24,6 +24,7 @@
 package org.tools4j.matmax.vector;
 
 import org.tools4j.matmax.indexed.Double1D;
+import org.tools4j.matmax.matrix.DoubleMatrix;
 
 import java.util.*;
 import java.util.function.*;
@@ -49,6 +50,30 @@ public interface DoubleVector extends Vector<Double, Double1D>, Double1D {
     @Override
     default BinaryOperable<Double1D, ? extends DoubleVector> with(final Double1D secondOperand) {
         return operator -> operator.apply(this, secondOperand);
+    }
+
+    @Override
+    default DoubleMatrix toRow() {
+        return DoubleMatrix.create(1, nElements(), (row, column) -> row >= 0 & row < 1 ? value(column) : 0d);
+    }
+
+    @Override
+    default DoubleMatrix toColumn() {
+        return DoubleMatrix.create(nElements(), 1, (row, column) -> column >= 0 & column < 1 ? value(row) : 0d);
+    }
+
+    default int indexOf(final double value) {
+        return indexOf(d -> Double.compare(d, value) == 0);
+    }
+
+    default int indexOf(final DoublePredicate matcher) {
+        final int n = nElements();
+        for (int i = 0; i < n; i++) {
+            if (matcher.test(value(i))) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
@@ -120,6 +145,11 @@ public interface DoubleVector extends Vector<Double, Double1D>, Double1D {
     @Override
     default <T> ObjVector<T> toObj1D(final DoubleFunction<? extends T> function) {
         return ObjVector.create(nElements(), Double1D.super.toObj1D(function));
+    }
+
+    @Override
+    default ObjVector<String> toStr1D() {
+        return ObjVector.create(nElements(), Double1D.super.toStr1D());
     }
 
     static DoubleVector create(final double... values) {
@@ -198,10 +228,10 @@ public interface DoubleVector extends Vector<Double, Double1D>, Double1D {
     }
 
     static DoubleVector constant(final int n, final double value) {
-        return create(n, index -> index >= 0 & index < n ? value : Double.NaN);
+        return Double.isNaN(value) ? nan(n) : create(n, index -> index >= 0 & index < n ? value : Double.NaN);
     }
 
     static DoubleVector nan(final int n) {
-        return create(n, index -> Double.NaN);
+        return create(n, Double1D.NAN);//no index check needed as NaN is default
     }
 }

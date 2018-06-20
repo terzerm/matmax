@@ -25,8 +25,6 @@ package org.tools4j.matmax.indexed;
 
 import org.tools4j.matmax.function.Operand;
 
-import java.util.Objects;
-
 public interface Indexed1D<V, T extends Indexed1D<V, T>> extends Operand<T> {
     V value(int index);
 
@@ -34,7 +32,5 @@ public interface Indexed1D<V, T extends Indexed1D<V, T>> extends Operand<T> {
         return this::value;
     }
 
-    default Obj1D<String> toStr1D() {
-        return index -> Objects.toString(value(index), null);
-    }
+    Obj1D<String> toStr1D();
 }

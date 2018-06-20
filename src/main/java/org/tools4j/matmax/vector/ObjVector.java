@@ -24,6 +24,7 @@
 package org.tools4j.matmax.vector;
 
 import org.tools4j.matmax.indexed.Obj1D;
+import org.tools4j.matmax.matrix.ObjMatrix;
 
 import java.util.*;
 import java.util.function.*;
@@ -43,6 +44,26 @@ public interface ObjVector<V> extends Vector<V, Obj1D<V>>, Obj1D<V> {
     @Override
     default BinaryOperable<Obj1D<V>, ? extends ObjVector<V>> with(final Obj1D<V> secondOperand) {
         return operator -> operator.apply(this, secondOperand);
+    }
+
+    @Override
+    default ObjMatrix<V> toRow() {
+        return ObjMatrix.create(1, nElements(), (row, column) -> row >= 0 & row < 1 ? value(column) : null);
+    }
+
+    @Override
+    default ObjMatrix<V> toColumn() {
+        return ObjMatrix.create(nElements(), 1, (row, column) -> column >= 0 & column < 1 ? value(row) : null);
+    }
+
+    default int indexOf(final Predicate<? super V> predicate) {
+        final int n = nElements();
+        for (int i = 0; i < n; i++) {
+            if (predicate.test(value(i))) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
@@ -120,6 +141,16 @@ public interface ObjVector<V> extends Vector<V, Obj1D<V>>, Obj1D<V> {
     @Override
     default DoubleVector toDouble1D(final ToDoubleFunction<? super V> function) {
         return DoubleVector.create(nElements(), Obj1D.super.toDouble1D(function));
+    }
+
+    @Override
+    default ObjVector<String> toStr1D() {
+        return ObjVector.create(nElements(), Obj1D.super.toStr1D());
+    }
+
+    @Override
+    default ObjVector<String> toStr1D(final String nullDefault) {
+        return ObjVector.create(nElements(), Obj1D.super.toStr1D(nullDefault));
     }
 
     @SafeVarargs
@@ -210,10 +241,10 @@ public interface ObjVector<V> extends Vector<V, Obj1D<V>>, Obj1D<V> {
     }
 
     static <V> ObjVector<V> constant(final int n, final V value) {
-        return create(n, index -> index >= 0 & index < n ? value : null);
+        return value == null ? nulls(n) : create(n, index -> index >= 0 & index < n ? value : null);
     }
 
     static <V> ObjVector<V> nulls(final int n) {
-        return create(n, index -> null);
+        return create(n, Obj1D.nulls());//no index check needed as null is default
     }
 }

@@ -29,6 +29,10 @@ import java.util.function.*;
 
 @FunctionalInterface
 public interface Long2D extends Primitive2D<Long, Long2D>, Operand.LongOp<Long2D> {
+    Long2D ZERO = (row, column) -> 0L;
+    Long2D ONE = (row, column) -> 1L;
+    Long2D EYE = (row, column) -> row == column ? 1L : 0L;
+
     long valueAsLong(int row, int column);
 
     @Override
@@ -44,6 +48,16 @@ public interface Long2D extends Primitive2D<Long, Long2D>, Operand.LongOp<Long2D
     @Override
     default Long1D column(final int col) {
         return row -> valueAsLong(row, col);
+    }
+
+    @Override
+    default Obj1D<? extends Long1D> rows() {
+        return this::row;
+    }
+
+    @Override
+    default Obj1D<? extends Long1D> columns() {
+        return this::row;
     }
 
     @Override
@@ -85,5 +99,11 @@ public interface Long2D extends Primitive2D<Long, Long2D>, Operand.LongOp<Long2D
     @Override
     default Obj2D<String> toStr2D() {
         return (row, column) -> String.valueOf(valueAsLong(row, column));
+    }
+
+    static Long2D constant(final long value) {
+        if (value == 0L) return ZERO;
+        if (value == 1L) return ONE;
+        return (row, column) -> value;
     }
 }

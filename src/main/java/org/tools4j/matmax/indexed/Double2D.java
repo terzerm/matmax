@@ -29,6 +29,10 @@ import java.util.function.*;
 
 @FunctionalInterface
 public interface Double2D extends Primitive2D<Double, Double2D>, Operand.DoubleOp<Double2D> {
+    Double2D NAN = (row, column) -> Double.NaN;
+    Double2D ZERO = (row, column) -> 0d;
+    Double2D ONE = (row, column) -> 1d;
+
     double valueAsDouble(int row, int column);
 
     @Override
@@ -44,6 +48,16 @@ public interface Double2D extends Primitive2D<Double, Double2D>, Operand.DoubleO
     @Override
     default Double1D column(final int col) {
         return row -> valueAsDouble(row, col);
+    }
+
+    @Override
+    default Obj1D<? extends Double1D> rows() {
+        return this::row;
+    }
+
+    @Override
+    default Obj1D<? extends Double1D> columns() {
+        return this::row;
     }
 
     @Override
@@ -85,5 +99,12 @@ public interface Double2D extends Primitive2D<Double, Double2D>, Operand.DoubleO
     @Override
     default Obj2D<String> toStr2D() {
         return (row, column) -> String.valueOf(valueAsDouble(row, column));
+    }
+
+    static Double2D constant(final double value) {
+        if (value == 0d) return ZERO;
+        if (value == 1d) return ONE;
+        if (Double.isNaN(value)) return NAN;
+        return (row, column) -> value;
     }
 }

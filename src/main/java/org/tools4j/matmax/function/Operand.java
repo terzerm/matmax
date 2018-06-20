@@ -30,6 +30,7 @@ public interface Operand<T extends Operand<T>> {
 
     BinaryOperable<T,? extends T> with(T secondOperand);
 
+    @FunctionalInterface
     interface BinaryOperable<T,R> extends Function<BiFunction<? super R, ? super T, ? extends T>, T> {
         //nothing to add
     }

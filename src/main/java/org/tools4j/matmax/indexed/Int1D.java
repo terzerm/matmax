@@ -29,6 +29,9 @@ import java.util.function.*;
 
 @FunctionalInterface
 public interface Int1D extends Primitive1D<Integer, Int1D>, Operand.IntOp<Int1D> {
+    Int1D ZERO = index -> 0;
+    Int1D ONE = index -> 1;
+
     int valueAsInt(int index);
 
     @Override
@@ -83,5 +86,11 @@ public interface Int1D extends Primitive1D<Integer, Int1D>, Operand.IntOp<Int1D>
     @Override
     default Obj1D<String> toStr1D() {
         return index -> String.valueOf(valueAsInt(index));
+    }
+
+    static Int1D constant(final int value) {
+        if (value == 0) return ZERO;
+        if (value == 1) return ONE;
+        return index -> value;
     }
 }

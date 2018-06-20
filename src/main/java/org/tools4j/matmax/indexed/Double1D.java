@@ -29,6 +29,10 @@ import java.util.function.*;
 
 @FunctionalInterface
 public interface Double1D extends Primitive1D<Double, Double1D>, Operand.DoubleOp<Double1D> {
+    Double1D NAN = index -> Double.NaN;
+    Double1D ZERO = index -> 0d;
+    Double1D ONE = index -> 1d;
+
     double valueAsDouble(int index);
 
     @Override
@@ -75,5 +79,12 @@ public interface Double1D extends Primitive1D<Double, Double1D>, Operand.DoubleO
     @Override
     default Obj1D<String> toStr1D() {
         return index -> String.valueOf(valueAsDouble(index));
+    }
+
+    static Double1D constant(final double value) {
+        if (value == 0d) return ZERO;
+        if (value == 1d) return ONE;
+        if (Double.isNaN(value)) return NAN;
+        return index -> value;
     }
 }

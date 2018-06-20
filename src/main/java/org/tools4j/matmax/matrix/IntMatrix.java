@@ -26,6 +26,13 @@ package org.tools4j.matmax.matrix;
 import org.tools4j.matmax.indexed.Int1D;
 import org.tools4j.matmax.indexed.Int2D;
 import org.tools4j.matmax.vector.IntVector;
+import org.tools4j.matmax.vector.ObjVector;
+
+import java.util.Objects;
+import java.util.function.IntFunction;
+import java.util.function.IntPredicate;
+import java.util.function.IntToDoubleFunction;
+import java.util.function.IntToLongFunction;
 
 public interface IntMatrix extends Matrix<Integer, Int2D>, Int2D {
 
@@ -44,26 +51,79 @@ public interface IntMatrix extends Matrix<Integer, Int2D>, Int2D {
         return IntVector.create(rows, row -> valueAsInt(row, col));
     }
 
+    @Override
+    default ObjVector<? extends IntVector> rows() {
+        return ObjVector.create(nRows(), this::row);
+    }
+
+    @Override
+    default ObjVector<? extends IntVector> columns() {
+        return ObjVector.create(nColumns(), this::column);
+    }
+
+    @Override
+    default BoolMatrix toBool2D(final IntPredicate function) {
+        return BoolMatrix.create(nRows(), nColumns(), Int2D.super.toBool2D(function));
+    }
+
+    @Override
+    default LongMatrix toLong2D() {
+        return LongMatrix.create(nRows(), nColumns(), Int2D.super.toLong2D());
+    }
+
+    @Override
+    default LongMatrix toLong2D(final IntToLongFunction function) {
+        return LongMatrix.create(nRows(), nColumns(), Int2D.super.toLong2D(function));
+    }
+
+    @Override
+    default DoubleMatrix toDouble2D() {
+        return DoubleMatrix.create(nRows(), nColumns(), Int2D.super.toDouble2D());
+    }
+
+    @Override
+    default DoubleMatrix toDouble2D(final IntToDoubleFunction function) {
+        return DoubleMatrix.create(nRows(), nColumns(), Int2D.super.toDouble2D(function));
+    }
+
+    @Override
+    default ObjMatrix<Integer> toObj2D() {
+        return ObjMatrix.create(nRows(), nColumns(), Int2D.super.toObj2D());
+    }
+
+    @Override
+    default <T> ObjMatrix<T> toObj2D(final IntFunction<? extends T> function) {
+        return ObjMatrix.create(nRows(), nColumns(), Int2D.super.toObj2D(function));
+    }
+
+    @Override
+    default ObjMatrix<String> toStr2D() {
+        return ObjMatrix.create(nRows(), nColumns(), Int2D.super.toStr2D());
+    }
+
     static IntMatrix create(final int[][] values) {
         final int rows = values.length;
         final int cols = rows == 0 ? 0 : values[0].length;
-        return create(rows, cols, (r,c) ->
-                r >= 0 & r < rows & c >= 0 & c < cols & c < values[r].length ? values[r][c] : 0);
+        return create(rows, cols, (r,c) -> (r >= 0 & r < rows & c >= 0 & c < cols) && c < values[r].length ?
+                values[r][c] : 0);
     }
 
     static IntMatrix createFromRows(final int cols, final Int1D... rowData) {
         final int rows = rowData.length;
-        return create(rows, cols, (r,c) ->
-                r >= 0 & r < rows & c >= 0 & c < cols ? rowData[r].valueAsInt(c) : 0);
+        return create(rows, cols, (r,c) -> r >= 0 & r < rows & c >= 0 & c < cols ?
+                rowData[r].valueAsInt(c) : 0);
     }
 
     static IntMatrix createFromColumns(final int rows, final Int1D... columnData) {
         final int cols = columnData.length;
-        return create(rows, cols, (r,c) ->
-                r >= 0 & r < rows & c >= 0 & c < cols ? columnData[c].valueAsInt(r) : 0);
+        return create(rows, cols, (r,c) -> r >= 0 & r < rows & c >= 0 & c < cols ?
+                columnData[c].valueAsInt(r) : 0);
     }
 
     static IntMatrix create(final int rows, final int cols, final Int2D data) {
+        if (rows < 0) throw new IllegalArgumentException("rows must not be negative: " + rows);
+        if (cols < 0) throw new IllegalArgumentException("cols must not be negative: " + cols);
+        Objects.requireNonNull(data);
         return new IntMatrix() {
             @Override
             public int nRows() {

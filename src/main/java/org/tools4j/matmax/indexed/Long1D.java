@@ -29,6 +29,9 @@ import java.util.function.*;
 
 @FunctionalInterface
 public interface Long1D extends Primitive1D<Long, Long1D>, Operand.LongOp<Long1D> {
+    Long1D ZERO = index -> 0L;
+    Long1D ONE = index -> 1L;
+
     long valueAsLong(int index);
 
     @Override
@@ -75,5 +78,11 @@ public interface Long1D extends Primitive1D<Long, Long1D>, Operand.LongOp<Long1D
     @Override
     default Obj1D<String> toStr1D() {
         return index -> String.valueOf(valueAsLong(index));
+    }
+
+    static Long1D constant(final long value) {
+        if (value == 0L) return ZERO;
+        if (value == 1L) return ONE;
+        return index -> value;
     }
 }

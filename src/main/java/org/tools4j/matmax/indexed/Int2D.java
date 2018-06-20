@@ -29,6 +29,9 @@ import java.util.function.*;
 
 @FunctionalInterface
 public interface Int2D extends Primitive2D<Integer, Int2D>, Operand.IntOp<Int2D> {
+    Int2D ZERO = (row, column) -> 0;
+    Int2D ONE = (row, column) -> 1;
+
     int valueAsInt(int row, int column);
 
     @Override
@@ -44,6 +47,16 @@ public interface Int2D extends Primitive2D<Integer, Int2D>, Operand.IntOp<Int2D>
     @Override
     default Int1D column(final int col) {
         return row -> valueAsInt(row, col);
+    }
+
+    @Override
+    default Obj1D<? extends Int1D> rows() {
+        return this::row;
+    }
+
+    @Override
+    default Obj1D<? extends Int1D> columns() {
+        return this::row;
     }
 
     @Override
@@ -93,5 +106,11 @@ public interface Int2D extends Primitive2D<Integer, Int2D>, Operand.IntOp<Int2D>
     @Override
     default Obj2D<String> toStr2D() {
         return (row, column) -> String.valueOf(valueAsInt(row, column));
+    }
+
+    static Int2D constant(final int value) {
+        if (value == 0) return ZERO;
+        if (value == 1) return ONE;
+        return (row, column) -> value;
     }
 }

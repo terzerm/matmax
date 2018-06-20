@@ -24,6 +24,7 @@
 package org.tools4j.matmax.vector;
 
 import org.tools4j.matmax.indexed.Bool1D;
+import org.tools4j.matmax.matrix.BoolMatrix;
 
 import java.util.*;
 import java.util.function.Function;
@@ -44,6 +45,16 @@ public interface BoolVector extends Vector<Boolean, Bool1D>, Bool1D {
     @Override
     default BinaryOperable<Bool1D, ? extends BoolVector> with(final Bool1D secondOperand) {
         return operator -> operator.apply(this, secondOperand);
+    }
+
+    @Override
+    default BoolMatrix toRow() {
+        return BoolMatrix.create(1, nElements(), (row, column) -> row >= 0 & row < 1 ? value(column) : false);
+    }
+
+    @Override
+    default BoolMatrix toColumn() {
+        return BoolMatrix.create(nElements(), 1, (row, column) -> column >= 0 & column < 1 ? value(row) : false);
     }
 
     @Override
@@ -124,6 +135,11 @@ public interface BoolVector extends Vector<Boolean, Bool1D>, Bool1D {
     @Override
     default <T> ObjVector<T> toObj1D(final T trueValue, final T falseValue) {
         return ObjVector.create(nElements(), Bool1D.super.toObj1D(trueValue, falseValue));
+    }
+
+    @Override
+    default ObjVector<String> toStr1D() {
+        return ObjVector.create(nElements(), Bool1D.super.toStr1D());
     }
 
     static BoolVector create(final int n, final BitSet values) {
@@ -208,14 +224,14 @@ public interface BoolVector extends Vector<Boolean, Bool1D>, Bool1D {
     }
 
     static BoolVector constant(final int n, final boolean value) {
-        return create(n, index -> index >= 0 & index < n & value);//NOTE: unconditional & is intentional!
+        return value ? trues(n) : falses(n);
     }
 
     static BoolVector trues(final int n) {
-        return constant(n, true);
+        return create(n, index -> index >= 0 & index < n);
     }
 
     static BoolVector falses(final int n) {
-        return create(n, index -> false);
+        return create(n, Bool1D.FALSE);//no index check needed as false is default
     }
 }

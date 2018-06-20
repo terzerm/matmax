@@ -24,6 +24,8 @@
 package org.tools4j.matmax.vector;
 
 import org.tools4j.matmax.indexed.Indexed1D;
+import org.tools4j.matmax.indexed.Indexed2D;
+import org.tools4j.matmax.matrix.Matrix;
 
 import java.util.Iterator;
 import java.util.Objects;
@@ -47,6 +49,12 @@ public interface Vector<V, T extends Indexed1D<V, T>> extends Indexed1D<V, T>, I
         }
         return -1;
     }
+
+    ObjVector<String> toStr1D();
+
+    Matrix<V, ? extends Indexed2D<V, ?>> toRow();
+
+    Matrix<V, ? extends Indexed2D<V, ?>> toColumn();
 
     T materialize();
 

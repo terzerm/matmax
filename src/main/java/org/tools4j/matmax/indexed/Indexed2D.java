@@ -25,8 +25,6 @@ package org.tools4j.matmax.indexed;
 
 import org.tools4j.matmax.function.Operand;
 
-import java.util.Objects;
-
 public interface Indexed2D<V, T extends Indexed2D<V, T>> extends Operand<T> {
     V value(int row, int column);
 
@@ -34,11 +32,12 @@ public interface Indexed2D<V, T extends Indexed2D<V, T>> extends Operand<T> {
 
     Indexed1D<V, ? extends Indexed1D<V, ?>> column(int col);
 
+    Obj1D<? extends Indexed1D<V, ?>> rows();
+    Obj1D<? extends Indexed1D<V, ?>> columns();
+
     default Obj2D<V> toObj2D() {
         return this::value;
     }
 
-    default Obj2D<String> toStr2D() {
-        return (row, column) -> Objects.toString(value(row, column), null);
-    }
+    Obj2D<String> toStr2D();
 }

@@ -25,10 +25,13 @@ package org.tools4j.matmax.indexed;
 
 import org.tools4j.matmax.function.Operand;
 
+import java.util.Objects;
 import java.util.function.*;
 
 @FunctionalInterface
 public interface Obj2D<V> extends Indexed2D<V, Obj2D<V>>, Operand.ObjOp<V, Obj2D<V>> {
+    Obj2D<Object> NULL = (row, column) -> null;
+
     @Override
     V value(int row, int column);
 
@@ -40,6 +43,16 @@ public interface Obj2D<V> extends Indexed2D<V, Obj2D<V>>, Operand.ObjOp<V, Obj2D
     @Override
     default Obj1D<V> column(final int col) {
         return row -> value(row, col);
+    }
+
+    @Override
+    default Obj1D<? extends Obj1D<V>> rows() {
+        return this::row;
+    }
+
+    @Override
+    default Obj1D<? extends Obj1D<V>> columns() {
+        return this::row;
     }
 
     @Override
@@ -71,5 +84,23 @@ public interface Obj2D<V> extends Indexed2D<V, Obj2D<V>>, Operand.ObjOp<V, Obj2D
 
     default Double2D toDouble2D(final ToDoubleFunction<? super V> function) {
         return (row, column) -> function.applyAsDouble(value(row, column));
+    }
+
+    default Obj2D<String> toStr2D() {
+        return toStr2D(null);
+    }
+
+    default Obj2D<String> toStr2D(final String nullDefault) {
+        return (row, column) -> Objects.toString(value(row, column), nullDefault);
+    }
+
+    static <V> Obj2D<V> nulls() {
+        @SuppressWarnings("unchecked")
+        final Obj2D<V> nulls = (Obj2D<V>)NULL;
+        return nulls;
+    }
+
+    static <V> Obj2D<V> constant(final V value) {
+        return value == null ? nulls() : (row, column) -> value;
     }
 }

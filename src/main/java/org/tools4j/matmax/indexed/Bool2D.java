@@ -29,6 +29,9 @@ import java.util.function.Function;
 
 @FunctionalInterface
 public interface Bool2D extends Primitive2D<Boolean, Bool2D>, Operand.BoolOp<Bool2D> {
+    Bool2D TRUE = (row, column) -> true;
+    Bool2D FALSE = (row, column) -> false;
+
     boolean valueAsBoolean(int row, int column);
 
     @Override
@@ -44,6 +47,16 @@ public interface Bool2D extends Primitive2D<Boolean, Bool2D>, Operand.BoolOp<Boo
     @Override
     default Bool1D column(final int col) {
         return row -> valueAsBoolean(row, col);
+    }
+
+    @Override
+    default Obj1D<? extends Bool1D> rows() {
+        return this::row;
+    }
+
+    @Override
+    default Obj1D<? extends Bool1D> columns() {
+        return this::row;
     }
 
     @Override
@@ -104,6 +117,10 @@ public interface Bool2D extends Primitive2D<Boolean, Bool2D>, Operand.BoolOp<Boo
 
     @Override
     default Obj2D<String> toStr2D() {
-        return (row, column) -> String.valueOf(valueAsBoolean(row, column));
+        return toObj2D("true", "false");
+    }
+
+    static Bool2D constant(final boolean value) {
+        return value ? TRUE : FALSE;
     }
 }

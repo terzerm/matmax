@@ -23,9 +23,12 @@
  */
 package org.tools4j.matmax.matrix;
 
-import org.tools4j.matmax.indexed.*;
+import org.tools4j.matmax.indexed.Double1D;
+import org.tools4j.matmax.indexed.Double2D;
 import org.tools4j.matmax.vector.DoubleVector;
+import org.tools4j.matmax.vector.ObjVector;
 
+import java.util.Objects;
 import java.util.function.*;
 
 public interface DoubleMatrix extends Matrix<Double, Double2D>, Double2D {
@@ -45,6 +48,16 @@ public interface DoubleMatrix extends Matrix<Double, Double2D>, Double2D {
     }
 
     @Override
+    default ObjVector<? extends DoubleVector> rows() {
+        return ObjVector.create(nRows(), this::row);
+    }
+
+    @Override
+    default ObjVector<? extends DoubleVector> columns() {
+        return ObjVector.create(nColumns(), this::column);
+    }
+
+    @Override
     default DoubleMatrix apply(final Function<? super Double2D, ? extends Double2D> operator) {
         return create(this, Double2D.super.apply(operator));
     }
@@ -59,36 +72,41 @@ public interface DoubleMatrix extends Matrix<Double, Double2D>, Double2D {
         return operator -> operator.apply(this, secondOperand);
     }
 
-    @Override//FIXME return BoolMatrix
-    default Bool2D toBool2D(final DoublePredicate function) {
-        return (row, column) -> function.test(valueAsDouble(row, column));
+    @Override
+    default BoolMatrix toBool2D(final DoublePredicate function) {
+        return BoolMatrix.create(nRows(), nColumns(), Double2D.super.toBool2D(function));
     }
 
-    @Override//FIXME return IntMatrix
-    default Int2D toInt2D(final DoubleToIntFunction function) {
-        return (row, column) -> function.applyAsInt(valueAsDouble(row, column));
+    @Override
+    default IntMatrix toInt2D(final DoubleToIntFunction function) {
+        return IntMatrix.create(nRows(), nColumns(), Double2D.super.toInt2D(function));
     }
 
-    @Override//FIXME return LongMatrix
-    default Long2D toLong2D(final DoubleToLongFunction function) {
-        return (row, column) -> function.applyAsLong(valueAsDouble(row, column));
+    @Override
+    default LongMatrix toLong2D(final DoubleToLongFunction function) {
+        return LongMatrix.create(nRows(), nColumns(), Double2D.super.toLong2D(function));
     }
 
     @Override
     default ObjMatrix<Double> toObj2D() {
-        return toObj2D(Double::valueOf);
+        return ObjMatrix.create(this, Double2D.super.toObj2D());
     }
 
     @Override
     default <T> ObjMatrix<T> toObj2D(final DoubleFunction<? extends T> function) {
-        return ObjMatrix.create(this, (row, column) -> function.apply(valueAsDouble(row, column)));
+        return ObjMatrix.create(this, Double2D.super.toObj2D(function));
+    }
+
+    @Override
+    default ObjMatrix<String> toStr2D() {
+        return ObjMatrix.create(nRows(), nColumns(), Double2D.super.toStr2D());
     }
 
     static DoubleMatrix create(final double[][] values) {
         final int rows = values.length;
         final int cols = rows == 0 ? 0 : values[0].length;
-        return create(rows, cols, (r,c) ->
-                r >= 0 & r < rows & c >= 0 & c < cols & c < values[r].length ? values[r][c] : Double.NaN);
+        return create(rows, cols, (r,c) -> (r >= 0 & r < rows & c >= 0 & c < cols) && c < values[r].length ?
+                values[r][c] : Double.NaN);
     }
 
     static DoubleMatrix createFromRows(final DoubleVector... rowData) {
@@ -96,8 +114,8 @@ public interface DoubleMatrix extends Matrix<Double, Double2D>, Double2D {
     }
     static DoubleMatrix createFromRows(final int cols, final Double1D... rowData) {
         final int rows = rowData.length;
-        return create(rows, cols, (r,c) ->
-                r >= 0 & r < rows & c >= 0 & c < cols ? rowData[r].valueAsDouble(c) : Double.NaN);
+        return create(rows, cols, (r,c) -> r >= 0 & r < rows & c >= 0 & c < cols ?
+                rowData[r].valueAsDouble(c) : Double.NaN);
     }
 
     static DoubleMatrix createFromColumns(final DoubleVector... columnData) {
@@ -105,8 +123,8 @@ public interface DoubleMatrix extends Matrix<Double, Double2D>, Double2D {
     }
     static DoubleMatrix createFromColumns(final int rows, final Double1D... columnData) {
         final int cols = columnData.length;
-        return create(rows, cols, (r,c) ->
-                r >= 0 & r < rows & c >= 0 & c < cols ? columnData[c].valueAsDouble(r) : Double.NaN);
+        return create(rows, cols, (r,c) -> r >= 0 & r < rows & c >= 0 & c < cols ?
+                columnData[c].valueAsDouble(r) : Double.NaN);
     }
 
     static DoubleMatrix create(final Matrix<?,?> meta, Double2D data) {
@@ -114,6 +132,9 @@ public interface DoubleMatrix extends Matrix<Double, Double2D>, Double2D {
     }
 
     static DoubleMatrix create(final int rows, final int cols, final Double2D data) {
+        if (rows < 0) throw new IllegalArgumentException("rows must not be negative: " + rows);
+        if (cols < 0) throw new IllegalArgumentException("cols must not be negative: " + cols);
+        Objects.requireNonNull(data);
         return new DoubleMatrix() {
             @Override
             public int nRows() {
@@ -151,4 +172,31 @@ public interface DoubleMatrix extends Matrix<Double, Double2D>, Double2D {
             }
         };
     }
+
+    static DoubleMatrix identity(final int n) {
+        return diagonal(n, 1d);
+    }
+
+    static DoubleMatrix diagonal(final int n, final double value) {
+        return diagonal(n, n, value);
+    }
+
+    static DoubleMatrix diagonal(final int nRows, final int nColumns, final double value) {
+        return create(nRows, nColumns, (row, column) -> row >= 0 & row < nRows & column >= 0 & column < nColumns ?
+                (row == column ? value : 0d) : Double.NaN);
+    }
+
+    static DoubleMatrix diagonal(final double... values) {
+        final int n = values.length;
+        return create(n, n, (row, column) -> row >= 0 & row < n & column >= 0 & column < n ?
+                (row == column ? values[row] : 0d) : Double.NaN);
+    }
+
+    static DoubleMatrix constant(final int nRows, final int nColumns, final double value) {
+        if (Double.isNaN(value)) {
+            return create(nRows, nColumns, Double2D.NAN);
+        }
+        return create(nRows, nColumns, (row, column) -> row >= 0 & row < nRows & column >= 0 & column <= nColumns ? value : Double.NaN);
+    }
+
 }

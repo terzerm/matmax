@@ -25,6 +25,7 @@ package org.tools4j.matmax.vector;
 
 import org.tools4j.matmax.indexed.Double1D;
 import org.tools4j.matmax.indexed.Long1D;
+import org.tools4j.matmax.matrix.LongMatrix;
 
 import java.util.*;
 import java.util.function.*;
@@ -50,6 +51,16 @@ public interface LongVector extends Vector<Long, Long1D>, Long1D {
     @Override
     default BinaryOperable<Long1D, ? extends LongVector> with(final Long1D secondOperand) {
         return operator -> operator.apply(this, secondOperand);
+    }
+
+    @Override
+    default LongMatrix toRow() {
+        return LongMatrix.create(1, nElements(), (row, column) -> row >= 0 & row < 1 ? value(column) : 0L);
+    }
+
+    @Override
+    default LongMatrix toColumn() {
+        return LongMatrix.create(nElements(), 1, (row, column) -> column >= 0 & column < 1 ? value(row) : 0L);
     }
 
     @Override
@@ -121,6 +132,11 @@ public interface LongVector extends Vector<Long, Long1D>, Long1D {
     @Override
     default <T> ObjVector<T> toObj1D(final LongFunction<? extends T> function) {
         return ObjVector.create(nElements(), Long1D.super.toObj1D(function));
+    }
+
+    @Override
+    default ObjVector<String> toStr1D() {
+        return ObjVector.create(nElements(), Long1D.super.toStr1D());
     }
 
     static LongVector create(final long... values) {
@@ -198,11 +214,11 @@ public interface LongVector extends Vector<Long, Long1D>, Long1D {
         };
     }
 
-    static LongVector constant(final int n, final int value) {
-        return create(n, index -> index >= 0 & index < n ? value : 0L);
+    static LongVector constant(final int n, final long value) {
+        return value == 0L ? zero(n) : create(n, index -> index >= 0 & index < n ? value : 0L);
     }
 
     static LongVector zero(final int n) {
-        return create(n, index -> 0L);
+        return create(n, Long1D.ZERO);//no index check needed as zero is default
     }
 }

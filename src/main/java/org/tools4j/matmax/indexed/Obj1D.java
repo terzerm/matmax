@@ -25,10 +25,13 @@ package org.tools4j.matmax.indexed;
 
 import org.tools4j.matmax.function.Operand;
 
+import java.util.Objects;
 import java.util.function.*;
 
 @FunctionalInterface
 public interface Obj1D<V> extends Indexed1D<V, Obj1D<V>>, Operand.ObjOp<V, Obj1D<V>> {
+    Obj1D<Object> NULL = index -> null;
+
     @Override
     V value(int index);
 
@@ -61,5 +64,23 @@ public interface Obj1D<V> extends Indexed1D<V, Obj1D<V>>, Operand.ObjOp<V, Obj1D
 
     default Double1D toDouble1D(final ToDoubleFunction<? super V> function) {
         return index -> function.applyAsDouble(value(index));
+    }
+
+    default Obj1D<String> toStr1D() {
+        return toStr1D(null);
+    }
+
+    default Obj1D<String> toStr1D(final String nullDefault) {
+        return index -> Objects.toString(value(index), nullDefault);
+    }
+
+    static <V> Obj1D<V> nulls() {
+        @SuppressWarnings("unchecked")
+        final Obj1D<V> nulls = (Obj1D<V>)NULL;
+        return nulls;
+    }
+
+    static <V> Obj1D<V> constant(final V value) {
+        return value == null ? nulls() : index -> value;
     }
 }
