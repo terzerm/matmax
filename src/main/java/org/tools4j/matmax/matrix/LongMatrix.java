@@ -189,6 +189,15 @@ public interface LongMatrix extends Matrix<Long, Long2D>, Long2D {
                 values[row] : 0L);
     }
 
+    static LongMatrix diagonal(final LongVector values) {
+        return diagonal(values.nElements(), values);
+    }
+
+    static LongMatrix diagonal(final int n, final Long1D values) {
+        return create(n, n, (row, column) -> row >= 0 & row < n & column >= 0 & column < n & row == column ?
+                values.valueAsLong(row) : 0L);
+    }
+
     static LongMatrix constant(final int nRows, final int nColumns, final long value) {
         if (value == 0L) {
             return create(nRows, nColumns, Long2D.ZERO);

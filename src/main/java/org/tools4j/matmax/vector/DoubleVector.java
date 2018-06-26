@@ -23,6 +23,7 @@
  */
 package org.tools4j.matmax.vector;
 
+import org.tools4j.matmax.function.DoubleBiPredicate;
 import org.tools4j.matmax.indexed.Double1D;
 import org.tools4j.matmax.matrix.DoubleMatrix;
 
@@ -62,14 +63,33 @@ public interface DoubleVector extends Vector<Double, Double1D>, Double1D {
         return DoubleMatrix.create(nElements(), 1, (row, column) -> column >= 0 & column < 1 ? value(row) : 0d);
     }
 
-    default int indexOf(final double value) {
-        return indexOf(d -> Double.compare(d, value) == 0);
+    @Override
+    default int indexOf(final Double value, final int start) {
+        return indexOf(value.doubleValue(), start);
     }
 
-    default int indexOf(final DoublePredicate matcher) {
+    default int indexOf(final double value) {
+        return indexOf(value, 0);
+    }
+
+    default int indexOf(final double value, final int start) {
+        return indexOf(value, start, (d1, d2) -> Double.compare(d1, d2) == 0);
+    }
+
+    default int indexOf(final double value, final int start, final DoubleBiPredicate matcher) {
+        final int n = nElements();
+        for (int i = start; i < n; i++) {
+            if (matcher.test(value, valueAsDouble(i))) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    default int indexMatching(final DoublePredicate predicate) {
         final int n = nElements();
         for (int i = 0; i < n; i++) {
-            if (matcher.test(value(i))) {
+            if (predicate.test(valueAsDouble(i))) {
                 return i;
             }
         }

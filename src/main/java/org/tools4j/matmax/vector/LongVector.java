@@ -23,6 +23,7 @@
  */
 package org.tools4j.matmax.vector;
 
+import org.tools4j.matmax.function.LongBiPredicate;
 import org.tools4j.matmax.indexed.Double1D;
 import org.tools4j.matmax.indexed.Long1D;
 import org.tools4j.matmax.matrix.LongMatrix;
@@ -61,6 +62,35 @@ public interface LongVector extends Vector<Long, Long1D>, Long1D {
     @Override
     default LongMatrix toColumn() {
         return LongMatrix.create(nElements(), 1, (row, column) -> column >= 0 & column < 1 ? value(row) : 0L);
+    }
+
+    @Override
+    default int indexOf(final Long value, final int start) {
+        return indexOf(value.longValue(), start);
+    }
+
+    default int indexOf(final long value, final int start) {
+        return indexOf(value, start, (d1, d2) -> Double.compare(d1, d2) == 0);
+    }
+
+    default int indexOf(final long value, final int start, final LongBiPredicate matcher) {
+        final int n = nElements();
+        for (int i = start; i < n; i++) {
+            if (matcher.test(value, valueAsLong(i))) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    default int indexMatching(final LongPredicate predicate) {
+        final int n = nElements();
+        for (int i = 0; i < n; i++) {
+            if (predicate.test(valueAsLong(i))) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override

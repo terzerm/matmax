@@ -161,4 +161,39 @@ public interface IntMatrix extends Matrix<Integer, Int2D>, Int2D {
             }
         };
     }
+
+    static IntMatrix identity(final int n) {
+        return diagonal(n, 1);
+    }
+
+    static IntMatrix diagonal(final int n, final int value) {
+        return diagonal(n, n, value);
+    }
+
+    static IntMatrix diagonal(final int nRows, final int nColumns, final int value) {
+        return create(nRows, nColumns, (row, column) ->
+                row >= 0 & row < nRows & column >= 0 & column < nColumns & row == column ? value : 0);
+    }
+
+    static IntMatrix diagonal(final int... values) {
+        final int n = values.length;
+        return create(n, n, (row, column) -> row >= 0 & row < n & column >= 0 & column < n & row == column ?
+                values[row] : 0);
+    }
+
+    static IntMatrix diagonal(final IntVector values) {
+        return diagonal(values.nElements(), values);
+    }
+
+    static IntMatrix diagonal(final int n, final Int1D values) {
+        return create(n, n, (row, column) -> row >= 0 & row < n & column >= 0 & column < n & row == column ?
+                values.valueAsInt(row) : 0);
+    }
+
+    static IntMatrix constant(final int nRows, final int nColumns, final int value) {
+        if (value == 0) {
+            return create(nRows, nColumns, Int2D.ZERO);
+        }
+        return create(nRows, nColumns, (row, column) -> row >= 0 & row < nRows & column >= 0 & column <= nColumns ? value : 0);
+    }
 }

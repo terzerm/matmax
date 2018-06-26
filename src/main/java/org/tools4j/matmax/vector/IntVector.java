@@ -23,6 +23,7 @@
  */
 package org.tools4j.matmax.vector;
 
+import org.tools4j.matmax.function.IntBiPredicate;
 import org.tools4j.matmax.indexed.Double1D;
 import org.tools4j.matmax.indexed.Int1D;
 import org.tools4j.matmax.matrix.IntMatrix;
@@ -64,8 +65,32 @@ public interface IntVector extends Vector<Integer, Int1D>, Int1D {
     }
 
     @Override
-    default ObjVector<String> toStr1D() {
-        return ObjVector.create(nElements(), Int1D.super.toStr1D());
+    default int indexOf(final Integer value, final int start) {
+        return indexOf(value.intValue(), start);
+    }
+
+    default int indexOf(final int value, final int start) {
+        return indexOf(value, start, (i1,i2) -> i1 == i2);
+    }
+
+    default int indexOf(final int value, final int start, final IntBiPredicate matcher) {
+        final int n = nElements();
+        for (int i = start; i < n; i++) {
+            if (matcher.test(value, valueAsInt(i))) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    default int indexMatching(final IntPredicate predicate) {
+        final int n = nElements();
+        for (int i = 0; i < n; i++) {
+            if (predicate.test(valueAsInt(i))) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
@@ -142,6 +167,11 @@ public interface IntVector extends Vector<Integer, Int1D>, Int1D {
     @Override
     default <T> ObjVector<T> toObj1D(final IntFunction<? extends T> function) {
         return ObjVector.create(nElements(), Int1D.super.toObj1D(function));
+    }
+
+    @Override
+    default ObjVector<String> toStr1D() {
+        return ObjVector.create(nElements(), Int1D.super.toStr1D());
     }
 
     static IntVector create(final int... values) {

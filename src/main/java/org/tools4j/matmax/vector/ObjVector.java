@@ -56,7 +56,17 @@ public interface ObjVector<V> extends Vector<V, Obj1D<V>>, Obj1D<V> {
         return ObjMatrix.create(nElements(), 1, (row, column) -> column >= 0 & column < 1 ? value(row) : null);
     }
 
-    default int indexOf(final Predicate<? super V> predicate) {
+    default int indexOf(final V value, final int start, final BiPredicate<? super V, ? super V> matcher) {
+        final int n = nElements();
+        for (int i = start; i < n; i++) {
+            if (matcher.test(value, value(i))) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    default int indexMatching(final Predicate<? super V> predicate) {
         final int n = nElements();
         for (int i = 0; i < n; i++) {
             if (predicate.test(value(i))) {

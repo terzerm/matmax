@@ -186,6 +186,15 @@ public interface DoubleMatrix extends Matrix<Double, Double2D>, Double2D {
                 (row == column ? value : 0d) : Double.NaN);
     }
 
+    static DoubleMatrix diagonal(final DoubleVector values) {
+        return diagonal(values.nElements(), values);
+    }
+
+    static DoubleMatrix diagonal(final int n, final Double1D values) {
+        return create(n, n, (row, column) -> row >= 0 & row < n & column >= 0 & column < n & row == column ?
+                values.valueAsDouble(row) : Double.NaN);
+    }
+
     static DoubleMatrix diagonal(final double... values) {
         final int n = values.length;
         return create(n, n, (row, column) -> row >= 0 & row < n & column >= 0 & column < n ?

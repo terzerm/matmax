@@ -23,6 +23,7 @@
  */
 package org.tools4j.matmax.matrix;
 
+import org.tools4j.matmax.indexed.Obj1D;
 import org.tools4j.matmax.indexed.Obj2D;
 import org.tools4j.matmax.vector.ObjVector;
 
@@ -141,6 +142,15 @@ public interface ObjMatrix<V> extends Matrix<V, Obj2D<V>>, Obj2D<V> {
     static <V> ObjMatrix<V> diagonal(final int nRows, final int nColumns, final V value) {
         return create(nRows, nColumns, (row, column) ->
                 row >= 0 & row < nRows & column >= 0 & column < nColumns & row == column ? value : null);
+    }
+
+    static <V> ObjMatrix<V> diagonal(final ObjVector<V> values) {
+        return diagonal(values.nElements(), values);
+    }
+
+    static <V> ObjMatrix<V> diagonal(final int n, final Obj1D<V> values) {
+        return create(n, n, (row, column) -> row >= 0 & row < n & column >= 0 & column < n & row == column ?
+                values.value(row) : null);
     }
 
     static <V> ObjMatrix<V> diagonal(final V... values) {

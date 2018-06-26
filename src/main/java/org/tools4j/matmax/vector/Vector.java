@@ -30,20 +30,19 @@ import org.tools4j.matmax.matrix.Matrix;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Spliterator;
-import java.util.function.BiPredicate;
 import java.util.stream.BaseStream;
 
 public interface Vector<V, T extends Indexed1D<V, T>> extends Indexed1D<V, T>, Iterable<V> {
     int nElements();
 
     default int indexOf(final V value) {
-        return indexOf(value, Objects::equals);
+        return indexOf(value, 0);
     }
 
-    default int indexOf(final V value, final BiPredicate<? super V, ? super V> matcher) {
+    default int indexOf(final V value, final int start) {
         final int n = nElements();
-        for (int i = 0; i < n; i++) {
-            if (matcher.test(value, value(i))) {
+        for (int i = start; i < n; i++) {
+            if (Objects.equals(value, value(i))) {
                 return i;
             }
         }
